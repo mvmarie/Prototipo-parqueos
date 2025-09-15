@@ -47,11 +47,11 @@ def cargar_estado(ruta: str) -> List[List]:
 
 
 def guardar_estado(ruta: str, lotes: List[List]) -> None:
-    """Escribe el CSV con el formato nombre,capacidad,ocupados."""
+    """Escribe el CSV con el formato nombre,capacidad,ocupados (una línea por lote)."""
     lineas: List[str] = []
     for lote in lotes:
         nombre, capacidad, ocupados = lote[0], int(lote[1]), int(lote[2])
-        lineas.append(f"{nombre},{capacidad},{ocupados}")
+        lineas.append(f"{nombre},{capacidad},{ocupados}\n")  
     with open(ruta, "w", encoding="utf-8") as f:
         f.writelines(lineas)
 
@@ -127,49 +127,63 @@ def formatear_tabla(filas: List[List[str]]) -> str:
 
 # ---------------------- PROGRAMA PRINCIPAL ----------------------
 
+# Mensaje de bienvenida / introducción
+print("\n⋙════ ⋆★⋆ ════ ⋘ SISTEMA DE PARQUEOS UVG ⋙ ════ ⋆★⋆ ════ ⋘")
+print("Este sistema permite: ver disponibilidad, reservar y cancelar un espacio.")
+print("Cómo usar:")
+print("  1) Revise la tabla de disponibilidad.")
+print("  2) Elija una opción del menú (1-5).")
+print("  3) Siga las indicaciones en pantalla.\n")
+
 lotes_estado = cargar_estado(PARQUEOS_CSV)
 opcion_seleccionada = "0"
 
 while opcion_seleccionada != "5":
+    # Sección de disponibilidad con espaciado claro
+    print("\n≻───── ⋆✩⋆ ─────≺ DISPONIBILIDAD ACTUAL ≻───── ⋆✩⋆ ─────≺\n")
     filas_tabla = construir_filas_tabla(lotes_estado)
     print(formatear_tabla(filas_tabla))
+
+    # Menú principal con separación
+    print("\n≻───── ⋆✩⋆ ─────≺ MENÚ PRINCIPAL ≻───── ⋆✩⋆ ─────≺\n")
     print("1) Ver disponibilidad")
     print("2) Reservar un espacio")
     print("3) Cancelar una reserva")
-    print("4) Resetear estado (valores por defecto)")
-    print("5) Salir")
+    print("4) Reiniciar sistema (estado por defecto)")
+    print("5) Salir\n")
     opcion_seleccionada = input("Seleccione una opción: ").strip()
 
     if opcion_seleccionada == "1":
-        # Solo volverá a imprimir la tabla en la siguiente iteración
-        pass
+        # Solo vuelve a mostrar la tabla en la siguiente iteración
+        print("\nℹ️  Información actualizada mostrada arriba.\n")
     elif opcion_seleccionada == "2":
-        indice_texto = input("Ingrese el número del parqueo: ").strip()
+        indice_texto = input("\nIngrese el número del parqueo para reservar: ").strip()
         if indice_texto.isdigit():
             indice_int = int(indice_texto) - 1
             if reservar(lotes_estado, indice_int):
                 guardar_estado(PARQUEOS_CSV, lotes_estado)
-                print("Reserva confirmada.")
+                print("\n✅ Reserva confirmada.\n")
             else:
-                print("No se pudo reservar (sin cupo o índice inválido).")
+                print("\n❌ No se pudo reservar (sin cupo o índice inválido).\n")
         else:
-            print("Entrada inválida.")
+            print("\n⚠️ Entrada inválida (debe ser un número de la tabla).\n")
     elif opcion_seleccionada == "3":
-        indice_texto = input("Ingrese el número del parqueo: ").strip()
+        indice_texto = input("\nIngrese el número del parqueo para cancelar: ").strip()
         if indice_texto.isdigit():
             indice_int = int(indice_texto) - 1
             if cancelar(lotes_estado, indice_int):
                 guardar_estado(PARQUEOS_CSV, lotes_estado)
-                print("Reserva cancelada.")
+                print("\n↩️  Reserva cancelada correctamente.\n")
             else:
-                print("No hay reservas para cancelar o índice inválido.")
+                print("\n⚠️ No hay reservas para cancelar o índice inválido.\n")
         else:
-            print("Entrada inválida.")
+            print("\n⚠️ Entrada inválida (debe ser un número de la tabla).\n")
     elif opcion_seleccionada == "4":
         lotes_estado = resetear_estado()
         guardar_estado(PARQUEOS_CSV, lotes_estado)
-        print("Estado reseteado.")
+        print("\n🔄 El sistema se ha reiniciado a su estado original.\n")
     elif opcion_seleccionada == "5":
-        print("Saliendo... Gracias.")
+        print("\nSaliendo... ¡Gracias por usar el sistema!\n")
     else:
-        print("Opción inválida.")
+        print("\n⚠️ Opción inválida. Intente nuevamente.\n")
+
