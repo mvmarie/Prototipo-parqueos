@@ -1,83 +1,85 @@
-# Prototipo de Sistema de Parqueos (MVP v3)
+# Proyecto Fase 2 – Prototipo de Parqueos UVG
 
-> **Estado:** Prototipo funcional de consola que refleja los **elementos esenciales** de la solución propuesta: ver disponibilidad, reservar, cancelar y persistir el estado en archivo CSV (sin diccionarios, siguiendo las restricciones de la rúbrica).
+## 📌 Descripción
+Este proyecto corresponde a la **Fase 2 – Prototipado** d
+El prototipo es un sistema en consola que permite a los usuarios **visualizar la disponibilidad de parqueos cercanos a la universidad y reservar un espacio**.
 
-## 1) ¿Qué resuelve? (Vínculo con Fase 1)
-El problema identificado en la Fase 1 es **gestionar de forma sencilla la ocupación de parqueos** (consultar disponibilidad y evitar dobles reservas), con una solución que **no dependa de internet** y corra en equipos modestos para pruebas iniciales.
-Este MVP:
-- Permite **ver disponibilidad** de cada parqueo.
-- **Reserva** respetando la capacidad (sin sobrevender espacios).
-- **Cancela** reservas para liberar cupos.
-- **Persiste** el estado en `parqueos.csv` para no perder datos entre ejecuciones.
-- Mantiene **interacción simple** por consola, priorizando rapidez de prueba y cero fricción.
+El código está diseñado con **estructuras básicas de Python** (listas, funciones, variables descriptivas)
 
-> En la Fase 2/3, esta base puede migrar a una interfaz web o móvil y añadir usuarios/roles, reportes y analítica.
+## 🎯 Objetivo
+Resolver el problema identificado en la **Fase 1**:  
+> La falta de información clara y en tiempo real sobre la disponibilidad de parqueos cercanos al campus universitario.  
 
-## 2) Cómo correrlo (Instalación y uso)
-Requisitos: Python 3.8+
+Este prototipo simula disponibilidad en distintos parqueos y permite reservar un espacio, reduciendo la incertidumbre y mejorando la experiencia de los usuarios.
+
+## ⚙️ Funcionalidades principales
+1. **Visualizar disponibilidad** de parqueos (capacidad total y espacios libres).  
+2. **Reservar un espacio** en el parqueo elegido.  
+3. **Cancelar una reserva** para liberar espacio.  
+4. **Actualizar la información** en cada acción.  
+5. **Interfaz de consola sencilla e intuitiva** con menús numerados.  
+
+## 🛠️ Tecnologías utilizadas
+- Python 3.x  
+- Estructuras básicas: listas, funciones, condicionales y bucles.  
+
+## 🚀 Instrucciones de uso
+### 1. Clonar el repositorio
 ```bash
-# 1) Clonar o descargar este repo
-# 2) Ubicarse en la carpeta del proyecto
-# 3) Ejecutar:
-python parqueos_mvp_v3.py
+git clone https://github.com/usuario/prototipo-parqueos.git
+cd prototipo-parqueos
+python parqueos_mvp_v2.py
 ```
-Menú principal:
+## Interacción
+
+Seleccione la opción 1 para ver la disponibilidad de parqueos.
+
+Seleccione la opción 2 para reservar un espacio (elija el número del parqueo).
+
+Seleccione la opción 3 para cancelar una reserva.
+
+Seleccione la opción 4 para resetear el estado inicial.
+
+Seleccione la opción 5 para salir del sistema.
+
+## Estructura del proyecto
+``` bash
+prototipo-parqueos/
+│── parqueos_mvp_v3.py        # Código principal del prototipo
+│── parqueos.csv              # Datos de parqueos (capacidad y ocupados)
+│── README.md                 # Documentación del proyecto
+│── CONTRIBUTING.md           # Guía de contribución y buenas prácticas
+│── .gitignore                # Archivos a ignorar por Git
 ```
-1) Ver disponibilidad
-2) Reservar un espacio
-3) Cancelar una reserva
-4) Resetear estado (valores por defecto)
-5) Salir
-```
-> El archivo `parqueos.csv` **se genera/actualiza automáticamente**. Su formato es:
-```
-Parqueo A,5,2
-Parqueo B,3,3
-El Hoyo,4,1
-Puerta B,6,4
-```
+## ⚠️ Limitaciones del prototipo
 
-## 3) Estructura del proyecto
-```
-.
-├─ parqueos_mvp_v3.py        # Script principal (consola). E/S solo aquí
-├─ parqueos.csv              # Persistencia (CSV sin encabezados)
-├─ README.md                 # Este documento
-├─ CONTRIBUTING.md           # Guía de contribución y buenas prácticas
-└─ .gitignore                # Archivos/ carpetas a ignorar por Git
-```
+Este MVP no es perfecto y presenta limitaciones conocidas:
 
-## 4) Diseño y buenas prácticas
-- **Claridad del código**: nombres descriptivos, funciones pequeñas y responsabilidades únicas.
-- **Sin `input/print` dentro de funciones**: la lógica es pura y testeable; la E/S está solo en el bloque principal.
-- **Sin `while True`**, **sin `global`**, **sin diccionarios**: se emplean **listas** y **CSV** por la rúbrica.
-- **Documentado** con docstrings concisos; comentarios mínimos y no redundantes.
-- **Persistencia** con CSV para reproducibilidad y simplicidad.
+No maneja múltiples usuarios ni horarios.
 
-### Principales funciones
-- `cargar_estado(ruta)`: lee CSV o retorna estado inicial por defecto.
-- `guardar_estado(ruta, lotes)`: escribe CSV.
-- `espacios_libres(lote)`: capacidad – ocupados.
-- `puede_reservar(lote)`: `espacios_libres > 0`.
-- `reservar(lotes, indice)`: incrementa ocupados si hay cupo.
-- `cancelar(lotes, indice)`: decrementa ocupados si hay reservas.
-- `construir_filas_tabla(lotes)` y `formatear_tabla(filas)`: preparan salida tabular **sin imprimir**.
+Persistencia simple en un archivo CSV (sin base de datos).
 
-## 5) Demostración rápida (para README)
-> Inserta aquí un GIF de ~10s mostrando: ver → reservar → ver → cancelar → ver.
-Sugerencia para grabar: OBS Studio, ScreenToGif o QuickTime.
+La interfaz es solo en consola (sin interfaz gráfica ni aplicación web).
 
-## 6) Rúbrica y cumplimiento
-- **(20 pts) Prototipo funcional**: refleja los elementos esenciales (ver, reservar, cancelar, persistir). Código claro, funcional y documentado.
-- **(15 pts) Resuelve el problema de Fase 1**: el MVP ataca directamente la necesidad de **conocer y gestionar cupos** sin sobre-reservas, de manera simple y offline.
-- **(15 pts) Repo y buenas prácticas**: proyecto versionado, estructura mínima clara, README completo, documentación en funciones y guía de contribución.
+No tiene autenticación ni control de concurrencia.
 
-## 7) Roadmap (siguientes pasos)
-- Usuarios/roles y registro de acciones (auditoría).
-- Reporte diario/semana de ocupación (CSV → gráficos).
-- API/Interfaz web (Flask/Streamlit) y base de datos.
-- Control de concurrencia y bloqueo temporal de plazas.
-- Tests unitarios básicos (pytest) para lógica de negocio.
+*Estas limitaciones se reconocen para dejar claro que el prototipo es una versión inicial, y sirven como oportunidades de mejora para fases posteriores.*
 
-## 8) Licencia
-MIT (o la que el curso indique).
+## 📈 Roadmap (mejoras futuras)
+
+Fase 3: Manejo de horarios y tiempo límite de reserva.
+
+Fase 4: Reportes de uso y estadísticas de ocupación.
+
+Fase 5: Interfaz web o aplicación móvil conectada a base de datos.
+
+Fase 6: Autenticación de usuarios y roles diferenciados.
+
+## 👥 Creadores
+Grupo 7
+- Victor Flores
+- Diego Melgar
+- Diego Ramirez
+- Daniela Roldán
+
+
