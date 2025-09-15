@@ -51,8 +51,7 @@ def guardar_estado(ruta: str, lotes: List[List]) -> None:
     lineas: List[str] = []
     for lote in lotes:
         nombre, capacidad, ocupados = lote[0], int(lote[1]), int(lote[2])
-        lineas.append(f"{nombre},{capacidad},{ocupados}
-")
+        lineas.append(f"{nombre},{capacidad},{ocupados}")
     with open(ruta, "w", encoding="utf-8") as f:
         f.writelines(lineas)
 
@@ -123,12 +122,8 @@ def formatear_tabla(filas: List[List[str]]) -> str:
     cuerpo = []
     for fila in filas:
         cuerpo.append(" ".join([fila[i].ljust(anchos[i]) for i in range(len(fila))]))
-    return "
-" + linea_enc + "
-" + sep + "
-" + "
-".join(cuerpo) + "
-"
+    return "\n" + linea_enc + "\n" + sep + "\n" + "\n".join(cuerpo) + "\n"
+
 
 # ---------------------- PROGRAMA PRINCIPAL ----------------------
 
