@@ -154,35 +154,27 @@ while opcion_seleccionada != "5":
             indice_int = int(indice_texto) - 1
             if reservar(lotes_estado, indice_int):
                 guardar_estado(PARQUEOS_CSV, lotes_estado)
-                print("Reserva confirmada.
-")
+                print("Reserva confirmada.")
             else:
-                print("No se pudo reservar (sin cupo o índice inválido).
-")
+                print("No se pudo reservar (sin cupo o índice inválido).")
         else:
-            print("Entrada inválida.
-")
+            print("Entrada inválida.")
     elif opcion_seleccionada == "3":
         indice_texto = input("Ingrese el número del parqueo: ").strip()
         if indice_texto.isdigit():
             indice_int = int(indice_texto) - 1
             if cancelar(lotes_estado, indice_int):
                 guardar_estado(PARQUEOS_CSV, lotes_estado)
-                print("Reserva cancelada.
-")
+                print("Reserva cancelada.")
             else:
-                print("No hay reservas para cancelar o índice inválido.
-")
+                print("No hay reservas para cancelar o índice inválido.")
         else:
-            print("Entrada inválida.
-")
+            print("Entrada inválida.")
     elif opcion_seleccionada == "4":
         lotes_estado = resetear_estado()
         guardar_estado(PARQUEOS_CSV, lotes_estado)
-        print("Estado reseteado.
-")
+        print("Estado reseteado.")
     elif opcion_seleccionada == "5":
         print("Saliendo... Gracias.")
     else:
-        print("Opción inválida.
-")
+        print("Opción inválida.")
