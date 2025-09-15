@@ -1,19 +1,6 @@
-#!/usr/bin/env python3
 """
-Sistema de Parqueos (MVP v3, sin diccionarios, sin prints/inputs en funciones)
+Sistema de Parqueos
 
-Cumple restricciones de rúbrica:
-- Variables con nombres descriptivos.
-- Sin input()/print() dentro de funciones.
-- Sin uso de "global".
-- Sin "while True" (se usa condición explícita de salida).
-- Sin if __name__ == "__main__".
-- Comentarios mínimos y útiles (no redundantes).
-- Uso de funciones para la lógica.
-- Persistencia mediante CSV (listas), no JSON ni diccionarios.
-
-Uso:
-    python parqueos_mvp_v3.py
 Opcional: editar PARQUEOS_CSV para cambiar el archivo de datos.
 """
 from typing import List
@@ -109,7 +96,7 @@ def resetear_estado() -> List[List]:
         nuevo.append([fila[0], int(fila[1]), int(fila[2])])
     return nuevo
 
-# ---------------------- PRESENTACIÓN (solo helpers, sin I/O) ----------------------
+# ---------------------- PRESENTACIÓN ----------------------
 
 def construir_filas_tabla(lotes: List[List]) -> List[List[str]]:
     """Crea filas de texto para mostrar una tabla en consola, sin imprimirla."""
@@ -143,7 +130,7 @@ def formatear_tabla(filas: List[List[str]]) -> str:
 ".join(cuerpo) + "
 "
 
-# ---------------------- PROGRAMA PRINCIPAL (I/O SOLO AQUÍ) ----------------------
+# ---------------------- PROGRAMA PRINCIPAL ----------------------
 
 lotes_estado = cargar_estado(PARQUEOS_CSV)
 opcion_seleccionada = "0"
