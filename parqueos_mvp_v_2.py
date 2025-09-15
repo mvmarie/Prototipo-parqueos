@@ -1,5 +1,5 @@
 """
-Sistema de Parqueos
+Sistema de Parqueos.
 
 Opcional: editar PARQUEOS_CSV para cambiar el archivo de datos.
 """
@@ -51,7 +51,7 @@ def guardar_estado(ruta: str, lotes: List[List]) -> None:
     lineas: List[str] = []
     for lote in lotes:
         nombre, capacidad, ocupados = lote[0], int(lote[1]), int(lote[2])
-        lineas.append(f"{nombre},{capacidad},{ocupados}\n")  
+        lineas.append(f"{nombre},{capacidad},{ocupados}\n")
     with open(ruta, "w", encoding="utf-8") as f:
         f.writelines(lineas)
 
@@ -95,7 +95,6 @@ def resetear_estado() -> List[List]:
         nuevo.append([fila[0], int(fila[1]), int(fila[2])])
     return nuevo
 
-# ---------------------- PRESENTACIÓN ----------------------
 
 def construir_filas_tabla(lotes: List[List]) -> List[List[str]]:
     """Crea filas de texto para mostrar una tabla en consola, sin imprimirla."""
@@ -125,65 +124,113 @@ def formatear_tabla(filas: List[List[str]]) -> str:
     return "\n" + linea_enc + "\n" + sep + "\n" + "\n".join(cuerpo) + "\n"
 
 
-# ---------------------- PROGRAMA PRINCIPAL ----------------------
+def limpiar_consola() -> None:
+    """Limpia la consola (Windows: cls, Linux/Mac: clear)."""
+    os.system("cls" if os.name == "nt" else "clear")
 
-# Mensaje de bienvenida / introducción
-print("\n⋙════ ⋆★⋆ ════ ⋘ SISTEMA DE PARQUEOS UVG ⋙ ════ ⋆★⋆ ════ ⋘")
-print("Este sistema permite: ver disponibilidad, reservar y cancelar un espacio.")
-print("Cómo usar:")
-print("  1) Revise la tabla de disponibilidad.")
-print("  2) Elija una opción del menú (1-5).")
-print("  3) Siga las indicaciones en pantalla.\n")
+
+# ---------------------- PROGRAMA PRINCIPAL ----------------------
 
 lotes_estado = cargar_estado(PARQUEOS_CSV)
 opcion_seleccionada = "0"
 
 while opcion_seleccionada != "5":
-    # Sección de disponibilidad con espaciado claro
-    print("\n≻───── ⋆✩⋆ ─────≺ DISPONIBILIDAD ACTUAL ≻───── ⋆✩⋆ ─────≺\n")
-    filas_tabla = construir_filas_tabla(lotes_estado)
-    print(formatear_tabla(filas_tabla))
-
-    # Menú principal con separación
-    print("\n≻───── ⋆✩⋆ ─────≺ MENÚ PRINCIPAL ≻───── ⋆✩⋆ ─────≺\n")
+    # Mostrar solo menú (no disponibilidad) para evitar confusión
+    limpiar_consola()
+    print("⋙════ ⋆★⋆ ════ ⋘ SISTEMA DE PARQUEOS UVG ⋙ ════ ⋆★⋆ ════ ⋘\n")
     print("1) Ver disponibilidad")
-    print("2) Reservar un espacio")
+    print("2) Reservar un espacio (1 por usuario)")
     print("3) Cancelar una reserva")
     print("4) Reiniciar sistema (estado por defecto)")
     print("5) Salir\n")
     opcion_seleccionada = input("Seleccione una opción: ").strip()
 
     if opcion_seleccionada == "1":
-        # Solo vuelve a mostrar la tabla en la siguiente iteración
-        print("\nℹ️  Información actualizada mostrada arriba.\n")
+        # Ver disponibilidad bajo demanda
+        limpiar_consola()
+        print("≻───── ⋆✩⋆ ─────≺ DISPONIBILIDAD ACTUAL ≻───── ⋆✩⋆ ─────≺\n")
+        print(formatear_tabla(construir_filas_tabla(lotes_estado)))
+        input("Presione Enter para volver al menú...")
+
     elif opcion_seleccionada == "2":
+        # Reservar 1 espacio con confirmación y mostrando libres antes
+        limpiar_consola()
+        print("≻───── ⋆✩⋆ ─────≺ RESERVAR ESPACIO ≻───── ⋆✩⋆ ─────≺\n")
+        print(formatear_tabla(construir_filas_tabla(lotes_estado)))
         indice_texto = input("\nIngrese el número del parqueo para reservar: ").strip()
         if indice_texto.isdigit():
             indice_int = int(indice_texto) - 1
-            if reservar(lotes_estado, indice_int):
-                guardar_estado(PARQUEOS_CSV, lotes_estado)
-                print("\n✅ Reserva confirmada.\n")
+            if 0 <= indice_int < len(lotes_estado):
+                libres = espacios_libres(lotes_estado[indice_int])
+                nombre_lote = lotes_estado[indice_int][0]
+                if libres > 0:
+                    print(f"\n{nombre_lote} tiene {libres} espacio(s) libre(s).")
+                    confirmar = input("¿Confirmar reserva de 1 espacio? (s/n): ").strip().lower()
+                    if confirmar == "s":
+                        if reservar(lotes_estado, indice_int):
+                            guardar_estado(PARQUEOS_CSV, lotes_estado)
+                            print("\n✅ Reserva confirmada (1 espacio).\n")
+                        else:
+                            print("\n❌ No se pudo reservar (sin cupo disponible).\n")
+                    else:
+                        print("\n↩️ Reserva cancelada por el usuario.\n")
+                else:
+                    print("\n❌ No hay espacios disponibles en este parqueo.\n")
             else:
-                print("\n❌ No se pudo reservar (sin cupo o índice inválido).\n")
+                print("\n⚠️ Índice inválido.\n")
         else:
             print("\n⚠️ Entrada inválida (debe ser un número de la tabla).\n")
+
+        # Mostrar disponibilidad actualizada inmediatamente y pausar
+        print("≻───── ⋆✩⋆ ─────≺ DISPONIBILIDAD ACTUALIZADA ≻───── ⋆✩⋆ ─────≺\n")
+        print(formatear_tabla(construir_filas_tabla(lotes_estado)))
+        input("Presione Enter para volver al menú...")
+
     elif opcion_seleccionada == "3":
+        # Cancelar con confirmación
+        limpiar_consola()
+        print("≻───── ⋆✩⋆ ─────≺ CANCELAR RESERVA ≻───── ⋆✩⋆ ─────≺\n")
+        print(formatear_tabla(construir_filas_tabla(lotes_estado)))
         indice_texto = input("\nIngrese el número del parqueo para cancelar: ").strip()
         if indice_texto.isdigit():
             indice_int = int(indice_texto) - 1
-            if cancelar(lotes_estado, indice_int):
-                guardar_estado(PARQUEOS_CSV, lotes_estado)
-                print("\n↩️  Reserva cancelada correctamente.\n")
+            if 0 <= indice_int < len(lotes_estado):
+                nombre_lote = lotes_estado[indice_int][0]
+                if lotes_estado[indice_int][2] > 0:
+                    confirmar = input(f"¿Confirmar cancelación de 1 reserva en {nombre_lote}? (s/n): ").strip().lower()
+                    if confirmar == "s":
+                        if cancelar(lotes_estado, indice_int):
+                            guardar_estado(PARQUEOS_CSV, lotes_estado)
+                            print("\n↩️  Reserva cancelada correctamente.\n")
+                        else:
+                            print("\n⚠️ No hay reservas para cancelar.\n")
+                    else:
+                        print("\n↩️ Operación cancelada por el usuario.\n")
+                else:
+                    print("\n⚠️ No hay reservas registradas en ese parqueo.\n")
             else:
-                print("\n⚠️ No hay reservas para cancelar o índice inválido.\n")
+                print("\n⚠️ Índice inválido.\n")
         else:
             print("\n⚠️ Entrada inválida (debe ser un número de la tabla).\n")
+
+        print("≻───── ⋆✩⋆ ─────≺ DISPONIBILIDAD ACTUALIZADA ≻───── ⋆✩⋆ ─────≺\n")
+        print(formatear_tabla(construir_filas_tabla(lotes_estado)))
+        input("Presione Enter para volver al menú...")
+
     elif opcion_seleccionada == "4":
+        # Reiniciar estado y mostrar resultado
+        limpiar_consola()
         lotes_estado = resetear_estado()
         guardar_estado(PARQUEOS_CSV, lotes_estado)
-        print("\n🔄 El sistema se ha reiniciado a su estado original.\n")
+        print("≻───── ⋆✩⋆ ─────≺ SISTEMA REINICIADO ≻───── ⋆✩⋆ ─────≺\n")
+        print("🔄 El sistema se ha reiniciado a su estado original.\n")
+        print(formatear_tabla(construir_filas_tabla(lotes_estado)))
+        input("Presione Enter para volver al menú...")
+
     elif opcion_seleccionada == "5":
-        print("\nSaliendo... ¡Gracias por usar el sistema!\n")
+        limpiar_consola()
+        print("Saliendo... ¡Gracias por usar el sistema!\n")
     else:
         print("\n⚠️ Opción inválida. Intente nuevamente.\n")
+        input("Presione Enter para continuar...")
 
